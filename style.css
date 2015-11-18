@@ -1,0 +1,99 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.score {
+    align-items: center;
+    display: flex;
+    flex: .5;
+}
+
+.score.p1 {
+    transform: rotate(180deg);
+}
+
+.display {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+}
+
+.cards {
+    display: flex;
+    flex: 1.5;
+}
+
+.cards.p1 {
+    flex-direction: row-reverse;
+}
+
+.card {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.p1 .card {
+    flex-direction: column-reverse;
+}
+
+.button_card {
+    background: none;
+    flex-grow: 1;
+    outline: none;
+}
+
+.yellow {
+    background-color: #ffd700;
+}
+
+.blue {
+    background-color: #87Ceeb;
+}
+
+.white {
+    background-color: #fff;
+}
+
+.green {
+    background-color: #2e8b57;
+}
+
+.red {
+    background-color: #cd5c5c;
+}
+
+.buttons {
+    flex: 4;
+    height: 100%;
+}
+
+.turn {
+    font-family: monospace;
+    font-size: 160px;
+    left: 50%;
+    margin-left: -144px;
+    margin-top: -92px;
+    opacity: .05;
+    position: absolute;
+    top: 50%;
+    z-index: -9999;
+}
+
+.button_row {
+    display: flex;
+    height: 12.5%;
+}
+
+.button_row button {
+    background: none;
+    flex: 1;
+    outline: none;
+}
