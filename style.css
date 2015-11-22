@@ -9,6 +9,17 @@ body {
     margin: 0;
 }
 
+.wager {
+    display: flex;
+    flex: 0.25;
+}
+
+.wager_display {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+}
+
 .score {
     align-items: center;
     display: flex;
@@ -71,7 +82,7 @@ body {
 }
 
 .buttons {
-    flex: 4;
+    flex: 4.5;
     height: 100%;
 }
 
@@ -81,7 +92,7 @@ body {
     left: 50%;
     margin-left: -144px;
     margin-top: -92px;
-    opacity: .05;
+    opacity: .09;
     position: absolute;
     top: 50%;
     z-index: -9999;
