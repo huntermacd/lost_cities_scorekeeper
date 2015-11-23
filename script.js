@@ -1,10 +1,3 @@
-/*
-TODO: implement UNDO function that stores
-score/wager/total/etc. and reverts to those
-values when UNDO button is clicked. do this
-and remove the minus buttons altogether
-*/
-
 // objects
 function Player(player){
     this.yellow = {
@@ -59,11 +52,11 @@ var buttons = document.getElementById('buttons');
 // wagers
 var all_wagers = document.getElementsByClassName('wager_display');
 
-// pluses and minuses
-var all_pluses_minuses = document.getElementsByClassName('button_card');
+// pluses
+var all_pluses = document.getElementsByClassName('button_card');
 
-for (var i = 0; i < all_pluses_minuses.length; i++) {
-    all_pluses_minuses[i].addEventListener('click', store_ref, false);
+for (var i = 0; i < all_pluses.length; i++) {
+    all_pluses[i].addEventListener('click', store_ref, false);
 };
 
 // numbers
@@ -83,17 +76,25 @@ end_turn.addEventListener('click', turn_end, false);
 var reset_row = document.getElementById('reset_row');
 reset_row.addEventListener('click', row_reset, false);
 
+var undo_button = document.getElementById('undo');
+undo_button.addEventListener('click', undo, false);
+undo_button.style.visibility = "hidden";
+
 var wager = document.getElementById('wager');
 wager.addEventListener('click', add_wager, false);
 
 var bonus = document.getElementById('bonus');
 bonus.addEventListener('click', add_bonus, false);
 
+var all_function_buttons = document.getElementsByClassName('function_button');
+
 // globals
 var current_player;
 var current_color;
-var current_operation;
 var current_num;
+var previous_score;
+var previous_wager;
+var previous_started;
 
 // functions
 function start_new_game(){
@@ -109,6 +110,7 @@ function turn_end(){
         buttons.style.transform = 'rotate(0deg)';
     }
     hide_numbers();
+    undo_button.style.visibility = "hidden";
 }
 
 function row_reset(){
@@ -122,38 +124,42 @@ function row_reset(){
     hide_numbers();
 }
 
+function undo(){
+    var current = current_player[current_color];
+    current["score"] = previous_score;
+    current["score_display"].innerHTML = previous_score;
+    current["wager"] = previous_wager;
+    current["wager_display"].innerHTML = 'x' + previous_wager;
+    current["started"] = previous_started;
+    update_total();
+    undo_button.style.visibility = "hidden";
+}
+
 function hide_numbers(){
     for (var i = 0; i < all_numbers.length; i++) {
         all_numbers[i].style.visibility = 'hidden';
     };
-    wager.style.visibility = 'hidden';
-    bonus.style.visibility = 'hidden';
-    reset_row.style.visibility = 'hidden';
+    for (var i = 0; i < all_function_buttons.length; i++) {
+        all_function_buttons[i].style.visibility = 'hidden';
+    };
 }
 
 function show_numbers(){
     for (var i = 0; i < all_numbers.length; i++) {
         all_numbers[i].style.visibility = 'visible';
     };
-    wager.style.visibility = 'visible';
-    bonus.style.visibility = 'visible';
-    reset_row.style.visibility = 'visible';
+    for (var i = 0; i < all_function_buttons.length; i++) {
+        all_function_buttons[i].style.visibility = 'visible';
+    };
 }
 
 function add_wager(){
     start_expedition();
     hide_numbers();
     var current = current_player[current_color];
-    current["wager"] = eval(current["wager"] + current_operation + 1);
+    current["wager"] += 1;
     current["wager_display"].innerHTML = 'x' + current["wager"];
-    if (current_operation === "+"){
-        current["score"] -= 20;
-    } else {
-        current["score"] += 20;
-        if (current["score"] === -20) {
-            row_reset();
-        }
-    }
+    current["score"] -= 20;
     current["score_display"].innerHTML = current["score"];
     update_total();
 }
@@ -161,7 +167,7 @@ function add_wager(){
 function add_bonus(){
     hide_numbers();
     var current = current_player[current_color];
-    current["score"] = eval(current["score"] + current_operation + 20);
+    current["score"] += 20;
     current["score_display"].innerHTML = current["score"];
     update_total();
 }
@@ -169,19 +175,22 @@ function add_bonus(){
 function store_ref(e){
     current_player = eval(e.target.dataset.player);
     current_color = e.target.dataset.color;
-    current_operation = e.target.dataset.operation;
+    previous_score = current_player[current_color]["score"];
+    previous_wager = current_player[current_color]["wager"];
+    previous_started = current_player[current_color]["started"];
     show_numbers();
+    undo_button.style.visibility = "visible";
 }
 
 function get_num(e){
     current_num = parseInt(e.target.dataset.num);
     hide_numbers();
-    calculate(current_player, current_color, current_operation, current_num);
+    calculate(current_player, current_color, current_num);
 }
 
-function calculate(player, color, operation, num){
+function calculate(player, color, num){
     start_expedition();
-    player[color]["score"] = eval(player[color]["score"] + operation + (num * player[color]["wager"]));
+    player[color]["score"] += (num * player[color]["wager"]);
     player[color]["score_display"].innerHTML = player[color]["score"];
     update_total();
 }
