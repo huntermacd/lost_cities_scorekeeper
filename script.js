@@ -1,54 +1,65 @@
+/*
+TODO: implement UNDO function that stores
+score/wager/total/etc. and reverts to those
+values when UNDO button is clicked. do this
+and remove the minus buttons altogether
+*/
+
 // objects
-var player_1 = {
-    yellow: {
+function Player(player){
+    this.yellow = {
         score: 0,
-        score_display: document.getElementById('p1_yellow_display'),
+        score_display: document.getElementById(player + '_yellow_display'),
         started: false,
         wager: 1,
-        wager_display: document.getElementById('p1_yellow_wager')
-    }
-}
+        wager_display: document.getElementById(player + '_yellow_wager')
+    },
+    this.blue = {
+        score: 0,
+        score_display: document.getElementById(player + '_blue_display'),
+        started: false,
+        wager: 1,
+        wager_display: document.getElementById(player + '_blue_wager')
+    },
+    this.white = {
+        score: 0,
+        score_display: document.getElementById(player + '_white_display'),
+        started: false,
+        wager: 1,
+        wager_display: document.getElementById(player + '_white_wager')
+    },
+    this.green = {
+        score: 0,
+        score_display: document.getElementById(player + '_green_display'),
+        started: false,
+        wager: 1,
+        wager_display: document.getElementById(player + '_green_wager')
+    },
+    this.red = {
+        score: 0,
+        score_display: document.getElementById(player + '_red_display'),
+        started: false,
+        wager: 1,
+        wager_display: document.getElementById(player + '_red_wager')
+    },
+    this.total = function(){
+        return this.yellow.score + this.blue.score + this.white.score + this.green.score + this.red.score;
+    },
+    this.total_display = document.getElementById(player + '_total')
+};
+
+var player_1 = new Player('p1');
+var player_2 = new Player('p2');
 
 // displays
-var p1_yellow_display = document.getElementById('p1_yellow_display');
-var p1_blue_display = document.getElementById('p1_blue_display');
-var p1_white_display = document.getElementById('p1_white_display');
-var p1_green_display = document.getElementById('p1_green_display');
-var p1_red_display = document.getElementById('p1_red_display');
-
-var p2_yellow_display = document.getElementById('p2_yellow_display');
-var p2_blue_display = document.getElementById('p2_blue_display');
-var p2_white_display = document.getElementById('p2_white_display');
-var p2_green_display = document.getElementById('p2_green_display');
-var p2_red_display = document.getElementById('p2_red_display');
-
 var all_displays = document.getElementsByClassName('display');
+var turn = document.getElementById('turn');
+var buttons = document.getElementById('buttons');
+
+// wagers
+var all_wagers = document.getElementsByClassName('wager_display');
 
 // pluses and minuses
-var p1_yellow_plus = document.getElementById('p1_yellow_plus');
-var p1_blue_plus = document.getElementById('p1_blue_plus');
-var p1_white_plus = document.getElementById('p1_white_plus');
-var p1_green_plus = document.getElementById('p1_green_plus');
-var p1_red_plus = document.getElementById('p1_red_plus');
-
-var p1_yellow_minus = document.getElementById('p1_yellow_minus');
-var p1_blue_minus = document.getElementById('p1_blue_minus');
-var p1_white_minus = document.getElementById('p1_white_minus');
-var p1_green_minus = document.getElementById('p1_green_minus');
-var p1_red_minus = document.getElementById('p1_red_minus');
-
-var p2_yellow_plus = document.getElementById('p2_yellow_plus');
-var p2_blue_plus = document.getElementById('p2_blue_plus');
-var p2_white_plus = document.getElementById('p2_white_plus');
-var p2_green_plus = document.getElementById('p2_green_plus');
-var p2_red_plus = document.getElementById('p2_red_plus');
-
-var p2_yellow_minus = document.getElementById('p2_yellow_minus');
-var p2_blue_minus = document.getElementById('p2_blue_minus');
-var p2_white_minus = document.getElementById('p2_white_minus');
-var p2_green_minus = document.getElementById('p2_green_minus');
-var p2_red_minus = document.getElementById('p2_red_minus');
-
 var all_pluses_minuses = document.getElementsByClassName('button_card');
 
 for (var i = 0; i < all_pluses_minuses.length; i++) {
@@ -56,26 +67,27 @@ for (var i = 0; i < all_pluses_minuses.length; i++) {
 };
 
 // numbers
-
-var button_2 = document.getElementById('button_2');
-var button_3 = document.getElementById('button_3');
-var button_4 = document.getElementById('button_4');
-var button_5 = document.getElementById('button_5');
-var button_6 = document.getElementById('button_6');
-var button_7 = document.getElementById('button_7');
-var button_8 = document.getElementById('button_8');
-var button_9 = document.getElementById('button_9');
-var button_10 = document.getElementById('button_10');
-var wager = document.getElementById('wager');
-var new_game = document.getElementById('new_game');
-new_game.addEventListener('click', start_new_game, false);
-var bonus = document.getElementById('bonus');
-
 var all_numbers = document.getElementsByClassName('number_button');
 
 for (var i = 0; i < all_numbers.length; i++) {
     all_numbers[i].addEventListener('click', get_num, false);
 };
+
+// other buttons
+var new_game = document.getElementById('new_game');
+new_game.addEventListener('click', start_new_game, false);
+
+var end_turn = document.getElementById('end_turn');
+end_turn.addEventListener('click', turn_end, false);
+
+var reset_row = document.getElementById('reset_row');
+reset_row.addEventListener('click', row_reset, false);
+
+var wager = document.getElementById('wager');
+wager.addEventListener('click', add_wager, false);
+
+var bonus = document.getElementById('bonus');
+bonus.addEventListener('click', add_bonus, false);
 
 // globals
 var current_player;
@@ -85,9 +97,28 @@ var current_num;
 
 // functions
 function start_new_game(){
-    for (var i = 0; i < all_displays.length; i++) {
-        all_displays[i].children[0].innerHTML = 0;
-    };
+    window.location.reload();
+}
+
+function turn_end(){
+    if (turn.innerHTML === "ONE"){
+        turn.innerHTML = "TWO";
+        buttons.style.transform = 'rotate(180deg)';
+    } else {
+        turn.innerHTML = "ONE";
+        buttons.style.transform = 'rotate(0deg)';
+    }
+    hide_numbers();
+}
+
+function row_reset(){
+    var current = current_player[current_color];
+    current["score"] = 0;
+    current["score_display"].innerHTML = current["score"];
+    update_total();
+    current["wager"] = 1;
+    current["wager_display"].innerHTML = 'x' + current["wager"];
+    current["started"] = false;
     hide_numbers();
 }
 
@@ -95,17 +126,44 @@ function hide_numbers(){
     for (var i = 0; i < all_numbers.length; i++) {
         all_numbers[i].style.visibility = 'hidden';
     };
+    wager.style.visibility = 'hidden';
+    bonus.style.visibility = 'hidden';
+    reset_row.style.visibility = 'hidden';
 }
 
 function show_numbers(){
     for (var i = 0; i < all_numbers.length; i++) {
         all_numbers[i].style.visibility = 'visible';
     };
+    wager.style.visibility = 'visible';
+    bonus.style.visibility = 'visible';
+    reset_row.style.visibility = 'visible';
 }
 
 function add_wager(){
-    selected_row.children[0].innerHTML += '*';
-    selected_row.innerHTML = parseInt(selected_row.innerHTML) + 10;
+    start_expedition();
+    hide_numbers();
+    var current = current_player[current_color];
+    current["wager"] = eval(current["wager"] + current_operation + 1);
+    current["wager_display"].innerHTML = 'x' + current["wager"];
+    if (current_operation === "+"){
+        current["score"] -= 20;
+    } else {
+        current["score"] += 20;
+        if (current["score"] === -20) {
+            row_reset();
+        }
+    }
+    current["score_display"].innerHTML = current["score"];
+    update_total();
+}
+
+function add_bonus(){
+    hide_numbers();
+    var current = current_player[current_color];
+    current["score"] = eval(current["score"] + current_operation + 20);
+    current["score_display"].innerHTML = current["score"];
+    update_total();
 }
 
 function store_ref(e){
@@ -122,9 +180,24 @@ function get_num(e){
 }
 
 function calculate(player, color, operation, num){
-    var new_score = eval(player[color]["score"] + operation + num);
-    player[color]["score"] = new_score;
-    player[color]["score_display"].innerHTML = new_score;
+    start_expedition();
+    player[color]["score"] = eval(player[color]["score"] + operation + (num * player[color]["wager"]));
+    player[color]["score_display"].innerHTML = player[color]["score"];
+    update_total();
+}
+
+function start_expedition(){
+    var current = current_player[current_color];
+    if (current["started"] === false){
+        current["score"] -= 20;
+        current["started"] = true;
+        current["score_display"].innerHTML = current["score"];
+        update_total();
+    }
+}
+
+function update_total(){
+    current_player["total_display"].innerHTML = 'Total: ' + current_player["total"]();
 }
 
 // init
